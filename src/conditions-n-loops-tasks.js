@@ -544,8 +544,75 @@ function sortByAsc(arr) {
  *  '012345', 3 => '024135' => '043215' => '031425'
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
-function shuffleChar(/*str, iterations*/) {
-  throw new Error('Not implemented')
+function shuffleChar(str, iterations) {
+  const n = str.length;
+  if (n === 0) return str;
+
+  const perm = [];
+  for (let i = 0; i < n; i += 1) {
+    if (i % 2 === 0) {
+      perm[i] = i / 2;
+    } else {
+      perm[i] = Math.floor(n / 2) + Math.floor(i / 2);
+    }
+  }
+
+  function applyPerm(arr, currentPerm) {
+    const res = [];
+    for (let i = 0; i < n; i += 1) {
+      res[i] = arr[currentPerm[i]];
+    }
+    return res;
+  }
+
+  function permPower(basePerm, initialPower) {
+    const result = [];
+    for (let i = 0; i < n; i += 1) {
+      result[i] = i;
+    }
+
+    const base = [];
+    for (let i = 0; i < n; i += 1) {
+      base[i] = basePerm[i];
+    }
+
+    let power = initialPower;
+
+    while (power > 0) {
+      if (power % 2 === 1) {
+        const nextResult = applyPerm(result, base);
+        for (let i = 0; i < n; i += 1) {
+          result[i] = nextResult[i];
+        }
+      }
+
+      const nextBase = applyPerm(base, base);
+      for (let i = 0; i < n; i += 1) {
+        base[i] = nextBase[i];
+      }
+
+      power = Math.floor(power / 2);
+    }
+    return result;
+  }
+
+  const finalPerm = permPower(perm, iterations);
+
+  const resArr = [];
+  for (let i = 0; i < n; i += 1) {
+    resArr[i] = '';
+  }
+
+  for (let i = 0; i < n; i += 1) {
+    resArr[finalPerm[i]] = str[i];
+  }
+
+  let result = '';
+  for (let i = 0; i < n; i += 1) {
+    result += resArr[i];
+  }
+
+  return result;
 }
 
 /**
